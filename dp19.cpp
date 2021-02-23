@@ -1,56 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//colouring the fence with given k colours and to the n fence.
-/*
-int coloringways(int n, int k)
+//Egg dropping problem.
+//o(n^2)
+
+int EggDropping(int n, int k)
 {
-    long dp[n + 1];
+    int dp[n + 1][k + 1];
     memset(dp, 0, sizeof(dp));
 
-    dp[1] = k;
-    dp[2] = k * k;
-
-    int mod = 1000000007;
-
-    for (int i = 3; i <= n; i++)
+    for (int i = 0; i <= n; i++)
     {
-        dp[i] = ((k - 1) * (dp[i - 1] + dp[i - 2])) % mod;
+        for (int j = 0; j <= k; j++)
+        {
+            if (i == 1)
+            {
+                dp[i][j] = j;
+            }
+            else if (j == 1)
+            {
+                dp[i][j] = 1;
+            }
+            else
+            {
+                int res = INT_MAX;
+                for (int mj = j - 1, pi = 0; mj >= 0; mj--, pi++)
+                {
+                    int v1 = dp[i][mj];
+                    int v2 = dp[i - 1][pi];
+                    int val = max(v1, v2);
+                    res = min(val, res);
+                }
+                dp[i][j] = 1 + res;
+            }
+        }
     }
-    return dp[n];
+    return dp[n][k];
 }
 
 int main()
 {
-    int n = 3;
-    int k = 2;
-    cout << "no of ways are:" << coloringways(n, k) << "\n";
-    return 0;
-}*/
-
-long countways(int n, int k)
-{
-    long total = k;
-    int mod = 100000007;
-
-    int same = 0;
-    int diff = k;
-
-    for (int i = 2; i <= n; i++)
-    {
-        same = diff;
-        diff = total * (k - 1);
-        diff = diff % mod;
-
-        total = (same + diff) % mod;
-    }
-    return total;
-}
-
-int main()
-{
-    int n = 3;
-    int k = 2;
-    cout << countways(n, k) << endl;
+    int n = 2;
+    int k = 10;
+    cout << EggDropping(n, k);
     return 0;
 }

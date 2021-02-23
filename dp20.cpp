@@ -1,53 +1,73 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-//newman shanks williams prime algo.
-/*
-int newman(int n)
+
+//maximum height of the box can be made.
+//uses concepts of the longest increasing sequence.
+//o(n^2)
+
+struct Box
 {
-    if (n == 0 || n == 1)
-    {
-        return 1;
-    }
+    int h,w,d;
+};
 
-    return 2 * newman(n - 1) + newman(n - 2);
-}*/
-
-/*
-int newman(int n)
+int min(int x, int y)
 {
-    int dp[n+1];
+    return (x<y)?x:y;
+}
 
-    dp[0] = dp[1] = 1;
-
-    for (int i = 2; i <= n; i++)
-    {
-        dp[i] = 2 * dp[i - 1] + dp[i - 2];
-    }
-    return dp[n];
-}*/
-
-int newman(int n)
+int max(int x, int y)
 {
-    if (n == 0 || n == 1)
-    {
-        return 1;
+    return (x>y)?x:y;
+}
+
+int compare(const void *a, const void *b)
+{
+    return ((*(Box*)b).d*(*(Box*)b).w)-((*(Box*)a).d*(*(Box*)a).w);
+}
+
+int maxStackHeight(Box arr[], int n)
+{
+    Box rot[3*n];
+    int index=0;
+    for(int i=0;i<n;i++){
+        rot[index].h=arr[i].h;
+        rot[index].d=max(arr[i].d,arr[i].w);
+        rot[index].w=min(arr[i].d,arr[i].w);
+        index++;
+
+        rot[index].h=arr[i].w;
+        rot[index].d=max(arr[i].h,arr[i].d);
+        rot[index].w=min(arr[i].h,arr[i].d);
+        index++;
+    }
+    n=3*n;
+    qsort(rot,n,sizeof(rot[0]),compare);
+    int msh[n];
+    for(int i=0;i<n;i++){
+        msh[i]=rot[i].h;
     }
 
-    int a = 1;
-    int b = 1;
-
-    for (int i = 2; i <= n; i++)
-    {
-        int c = 2 * b + a;
-        a = b;
-        b = c;
+    for(int i=1;i<n;i++){
+        for(int j=0;j<i;j++){
+            if(rot[i].w<rot[j].w && rot[i].d<rot[j].d && msh[i]<msh[j]+rot[i].h){
+                msh[i]=msh[j]+rot[i].h;
+            }
+        }
     }
-    return b;
+
+    int max=-1;
+    for(int i=0;i<n;i++){
+        if(max<msh[i]){
+            max=msh[i];
+        }
+    }
+    return max;
 }
 
 int main()
 {
-    int n = 3;
-    cout << "newman count is:" << newman(n) << "\n";
+    Box arr[]={ {4, 6, 7}, {1, 2, 3}, {4, 5, 6}, {10, 12, 32} }; 
+    int n=sizeof(arr)/sizeof(arr[0]);
+    cout<<maxStackHeight(arr,n);
     return 0;
 }

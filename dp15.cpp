@@ -1,54 +1,59 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//subset sum and divisible with given value
-//o(m^2)
-
-bool modualrsum(int arr[], int n, int m)
+int dictonaryConatains(string word)
 {
-    if (n > m)
+    string dictionary[] = {"mobile", "samsung", "sam", "sung", "man", "mango", "iceream", "and", "go", "i", "like", "ice", "cream"};
+    int n = sizeof(dictionary) / sizeof(dictionary[0]);
+    for (int i = 0; i < n; i++)
+    {
+        if (dictionary[i].compare(word) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WordConatins(string str)
+{
+    int n = str.size();
+    if (n == 0)
     {
         return true;
     }
 
-    bool dp[m];
-    memset(dp, false, m);
+    vector<int> dp(n + 1, 0);
+
+    vector<int> matched_index;
+    matched_index.push_back(-1);
 
     for (int i = 0; i < n; i++)
     {
-        if (dp[0])
-        {
-            return true;
-        }
+        int msize = matched_index.size();
 
-        bool temp[m];
-        memset(temp, false, m);
-        for (int j = 0; j < m; j++)
+        int f = 0;
+
+        for (int j = msize - 1; j >= 0; j--)
         {
-            if (dp[j] == true)
+            string sb = str.substr(matched_index[j] + 1, i - matched_index[j]);
+            if (dictonaryConatains(sb))
             {
-                if (dp[(j + arr[i]) % m] == false)
-                {
-                    temp[(j + arr[i]) % m] = true;
-                }
+                f = 1;
+                break;
             }
         }
-        for (int j = 0; j < n; j++)
+        if (f == 1)
         {
-            if (temp[j])
-            {
-                dp[j] = true;
-            }
+            dp[i] = 1;
+            matched_index.push_back(i);
         }
     }
-    return dp[0];
+    return dp[n - 1];
 }
 
 int main()
 {
-    int arr[] = {1, 3, 2, 1};
-    int n = sizeof(arr) / sizeof(int);
-    int m = 5;
-    modualrsum(arr, n, m) ? cout << "YES\n" : cout << "NO\n";
+    WordConatins("ilikesamsung") ? cout << "YES" : cout << "NO";
     return 0;
 }

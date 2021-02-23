@@ -1,42 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//subset sum problem with o(n) space
+//word segementation problem.
+//o(n^2)
+//memoization apporach.
 
-bool issubsetsum(int arr[], int n, int sum)
+int dictionaryConatins(string word)
 {
-    bool subset[2][sum + 1];
+    string dictionary[] = {"mobile", "samsung", "sam", "sung", "man", "mango", "iceream", "and", "go", "i", "like", "ice", "cream"};
+    int size = sizeof(dictionary) / sizeof(dictionary[0]);
 
-    for (int i = 0; i <= n; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j <= sum; j++)
+        if (dictionary[i].compare(word) == 0)
         {
-            if (j == 0)
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WordConstains(string str)
+{
+    int n = str.size();
+    if (n == 0)
+    {
+        return true;
+    }
+
+    bool dp[n + 1];
+    memset(dp, 0, sizeof(dp));
+
+    for (int i = 1; i <= n; i++)
+    {
+        if (dp[i] == false && dictionaryConatins(str.substr(0, i)))
+        {
+            dp[i] = true;
+        }
+        if (dp[i] == true)
+        {
+            if (i == n)
             {
-                subset[i % 2][j] = true;
+                return true;
             }
-            else if (i == 0)
+            for (int j = i + 1; j <= n; j++)
             {
-                subset[i % 2][j] = false;
-            }
-            else if (arr[i - 1] <= j)
-            {
-                subset[i % 2][j] = subset[(i + 1) % 2][j - arr[i - 1]] || subset[(i + 1) % 2][j];
-            }
-            else
-            {
-                subset[i % 2][j] = subset[(i + 1) % 2][j];
+                if (dp[j] == false && dictionaryConatins(str.substr(i, j - 1)))
+                {
+                    dp[j] = true;
+                }
+                if (j == n && dp[j] == true)
+                {
+                    return true;
+                }
             }
         }
     }
-    return subset[n % 2][sum];
+    return false;
 }
 
 int main()
 {
-    int arr[] = {6, 2, 5};
-    int sum = 7;
-    int n = sizeof(arr) / sizeof(int);
-    issubsetsum(arr, n, sum) ? cout << "YES" : cout << "NO";
+    WordConstains("ilikesamsung")?cout<<"YES":cout<<"NO";
     return 0;
 }

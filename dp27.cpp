@@ -1,30 +1,55 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-int countsetbit(int n, int diff)
+//Longest Bitonic sequence.
+//o(n^2)
+
+int LongestBitonicSequence(int arr[] ,int n)
 {
-    if (abs(diff) > 2)
-    {
-        return 0;
+    int dp[n];
+    for(int i=0;i<n;i++){
+        dp[i]=1;
     }
 
-    if (n == 1 && diff == 0)
-    {
-        return 2;
-    }
-    if (n == 1 && abs(diff) == 1)
-    {
-        return 1;
+    //Calculating the longest increasing sequence.
+    for(int i=1;i<n;i++){
+        for(int j=0;j<i;j++){
+            if(arr[i]>arr[j]&&dp[i]<dp[j]+1){
+                dp[i]=dp[j]+1;
+            }
+        }
     }
 
-    int res = countsetbit(n - 1, diff) + 2 * countsetbit(n - 1, diff) + countsetbit(n - 1, diff - 1);
+    int LDS[n];
+    for(int i=0;i<n;i++){
+        LDS[i]=1;
+    }
 
-    return res;
+    //Calculating the longest decreasing sequence
+
+    for(int i=n-2;i>=0;i--){
+        for(int j=n-1;j>i;j--){
+            if(arr[i]>arr[j]&&LDS[i]<LDS[j]+1){
+                LDS[i]=LDS[j]+1;
+            }
+        }
+    }
+    //Calculating the longest Bitonic sequence.
+
+    int max=dp[0]+LDS[0]-1;
+    for(int i=1;i<n;i++){
+        if(dp[i]+LDS[i]-1>max){
+            max=dp[i]+LDS[i]-1;
+        }
+    }
+    return max;
 }
+
 
 int main()
 {
-    int n = 2;
-    cout << "count of sequences is:" << countsetbit(2, 0);
+    int arr[]= {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15};
+    int n=sizeof(arr)/sizeof(arr[0]);
+    cout<<"Longest Bitonic Sequence is:"<<LongestBitonicSequence(arr,n);
     return 0;
 }

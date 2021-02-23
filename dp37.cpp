@@ -1,35 +1,64 @@
 #include <bits/stdc++.h>
-#define ll long long int
 using namespace std;
 
-//maximum product of increasing subsequence.
-
-ll productofsequence(int arr[], int n)
+void lcs(string X, string Y)
 {
-    ll mpis[n];
+    int m = X.length();
+    int n = Y.length();
 
-    for (int i = 0; i < n; i++)
+    int dp[2][n + 1];
+    bool flag = 0;
+    for (int i = 0; i <= m; i++)
     {
-        mpis[i] = arr[i];
-    }
-
-    for (int i = 1; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
+        flag = i & 1;
+        for (int j = 0; j <= n; j++)
         {
-            if (arr[i] > arr[j] && mpis[i] < (mpis[j] * arr[i]))
+            if (i == 0 || j == 0)
             {
-                mpis[i] = mpis[j] * arr[i];
+                dp[flag][j] = 0;
+            }
+            else if (X[i - 1] == Y[j - 1])
+            {
+                dp[flag][j] = dp[flag - 1][j - 1] + 1;
+            }
+            else
+            {
+                dp[flag][j] = max(dp[1 - flag][j], dp[flag][j - 1]);
             }
         }
     }
-    return *max_element(mpis, mpis + n);
+
+    int len = dp[2][n];
+    char lcs[len + 1];
+    lcs[len] = '\0';
+
+    int i = m;
+    int j = n;
+    while (i > 0 && j > 0)
+    {
+        if (X[i - 1] == Y[j - 1])
+        {
+            lcs[len - 1] = X[i - 1];
+            i--;
+            j--;
+            len--;
+        }
+        else if (dp[flag - 1][j] > dp[flag][j - 1])
+        {
+            i--;
+        }
+        else
+        {
+            j--;
+        }
+    }
+    cout << lcs;
 }
 
 int main()
 {
-    int arr[] = {3, 100, 4, 5, 150, 6};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    cout << "maximum product of the increasing sequence is:" << productofsequence(arr, n) << "\n";
+    string X = "AGGTAB";
+    string Y = "GXTAYAB";
+    lcs(X, Y);
     return 0;
 }

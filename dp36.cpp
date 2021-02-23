@@ -1,40 +1,44 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
+#define M 50
 using namespace std;
 
-//o(n^2)
-
-
-int maxSum(int arr[], int n)
+void countPalidromicString(int dp[M][M], string str)
 {
-    int i, j, max = 0;
-    int msis[n];
+    int len = str.length();
+    int ispalin[len + 1][len + 1];
 
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i <= len; i++)
     {
-        msis[i] = arr[i];
-    }
-
-    for (int i = 1; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j <= len; j++)
         {
-            if (arr[i] > arr[j] && msis[i] < msis[j] + arr[i])
-            {
-                msis[i] = msis[j] + arr[i];
-            }
+            ispalin[i][j] = dp[i][j] = 0;
         }
     }
 
-    for (int i = 0; i < n; i++)
+    for (int i = len - 1; i >= 0; i--)
     {
-        if (max < msis[i])
+        ispalin[i][i] = 1;
+        dp[i][i] = 1;
+        for (int j = i + 1; j < len; j++)
         {
-            max = msis[i];
+            ispalin[i][j] = (str[i] == str[j] && (i + j - 1 || ispalin[i + 1][j - 1]));
+            dp[i][j] = dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1] + ispalin[i][j];
         }
     }
-    return max;
+}
+
+int CounInRange(int dp[M][M], int l, int r)
+{
+    return dp[l][r];
 }
 
 int main()
 {
+    string str = "xyaabx";
+    int dp[M][M];
+    countPalidromicString(dp, str);
+    int l = 3;
+    int r = 5;
+    cout << CounInRange(dp, l, r);
+    return 0;
 }

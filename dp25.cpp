@@ -1,48 +1,85 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//newman-conways sequence.
-/*p(n)=p(p(n-1))+p(n-p(n-1))
+//printting the set partition.
+//o(n*sum/2);
 
-int newmanconway(int n)
+void printPartition(int arr[], int n)
 {
-    if (n < 1)
+    int i, j;
+    int sum = accumulate(arr, arr + n, 0);
+    if (sum & 1)
     {
-        return 0;
+        cout << "-1";
+        return;
     }
-
-    if (n == 1 || n == 2)
+    int k = sum >> 1;
+    bool dp[n + 1][k + 1];
+    //first row all values are zero because no of elements are zero then sum can't be formed.
+    for (int i = 0; i <= k; i++)
     {
-        return 1;
+        dp[0][i] = false;
     }
-
-    return newmanconway(newmanconway(n - 1)) + newmanconway(n - newmanconway(n - 1));
-}
-
-void printsolution(int n)
-{
-    for (int i = 3; i <= n; i++)
+    //first column all values are zero because sum zero can be formed from any elements.
+    for (int i = 0; i <= n; i++)
     {
-        cout << newmanconway(i) << " ";
+        dp[i][0] = true;
     }
-}
-*/
-
-int newmanconway(int n)
-{
-    int f[n+1];
-    int i;
-    f[0]=0;
-    f[1]=f[2]=1;
-    for(int i=3;i<=n;i++){
-        f[i]=f[f[i-1]]+f[n-f[i-1]];
+    //dp table bottom up manner.
+    for (int i = 1; i <= n; i++)
+    {
+        for (int j = 0; j <= k; j++)
+        {
+            //excluding the element.
+            dp[i][j] = dp[i - 1][j];
+            //including the element.
+            if (arr[i - 1] <= j)
+            {
+                dp[i][j] = dp[i][j] | dp[i - 1][j - arr[i - 1]];
+            }
+        }
     }
-    return f[n];
+    vector<int> set1, set2;
+    if (!dp[n][k])
+    {
+        cout << "-1\n";
+        return;
+    }
+    i = n;
+    j = k;
+    while (i > 0 && j >= 0)
+    {
+        //current element does not contribute to sum.
+        //push into set2.
+        if (dp[i - 1][j])
+        {
+            i--;
+            set2.push_back(arr[i]);
+        }
+        else if (dp[i - 1][j - arr[i - 1]])
+        {
+            i--;
+            j -= arr[i];
+            set1.push_back(arr[i]);
+        }
+    }
+    cout << "Set 1 elements:";
+    for (int i = 0; i < set1.size(); i++)
+    {
+        cout << set1[i] << " ";
+    }
+    cout << "\n";
+    cout << "set 2 elements:";
+    for (int i = 0; i < set2.size(); i++)
+    {
+        cout << set2[i] << " ";
+    }
 }
 
 int main()
 {
-    int n = 10;
-    cout << "newman-conways sequence is:" << newmanconway(n) << "\n";
+    int arr[] = {5, 5, 1, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printPartition(arr, n);
     return 0;
 }

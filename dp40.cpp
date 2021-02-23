@@ -1,42 +1,55 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//maximum subsequence with difference between adjacent element as either 0 or 1.
-//o(n^2)
+//Longet common subsequence of the given two strings.
 
-int maxLengthSequence(int arr[], int n)
+int max(int x, int y)
 {
-    int dp[n], max = 0;
+    return (x<y)?x:y;
+}
 
-    for (int i = 0; i < n; i++)
-    {
-        dp[i] = 1;
+//Recursive solution.
+/*
+int lcs(char *X, char *Y, int m, int n)
+{
+    if(m==0||n==0){
+        return 0;
     }
+    if(X[m-1]==Y[n-1]){
+        return 1+lcs(X,Y,m-1,n-1);
+    }
+    return max(lcs(X,Y,m,n-1),(X,Y,m-1,n));
+}
+*/
 
-    for (int i = 1; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
-        {
-            if (abs(arr[i] - arr[j]) <= 1 && dp[i] < dp[j] + 1)
-            {
-                dp[i] = dp[j] + 1;
+int lcs(char *X, char *Y, int m, int n)
+{
+    int dp[m+1][n+1];
+
+    for(int i=0;i<=m;i++){
+        for(int j=0;j<=n;j++){
+            if(i==0||j==0){
+                dp[i][j]=0;
+            }
+            else if(X[i-1]==Y[j-1]){
+                dp[i][j]=dp[i-1][j-1]+1;
+            }
+            else{
+                dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
             }
         }
     }
-    for (int i = 0; i < n; i++)
-    {
-        if (max < dp[i])
-        {
-            max = dp[i];
-        }
-    }
-    return max;
+    return dp[m][n];
 }
 
 int main()
 {
-    int arr[] = {2, 5, 6, 3, 7, 6, 5, 8};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    cout << "Maximum length subsequence is:" << maxLengthSequence(arr, n);
+    char X[] = "AGGTAB";
+    char Y[] = "GXTXAYAB";
+
+    int m = strlen(X);
+    int n = strlen(Y);
+
+    cout << "Length of lcs is:" << lcs(X, Y, m, n) << "\n";
     return 0;
 }

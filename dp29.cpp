@@ -1,65 +1,67 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-//o(2^n)
+//longest palidromic substring.
+//recursive solution.
 
-int max(int a, int b);
-/*
-int lcs(char *X, char *Y, int m, int n)
+int max(int x, int y)
 {
-    if (m == 0 || n == 0)
-    {
-        return 0;
-    }
-    if (X[m - 1] == Y[n - 1])
-    {
-        return 1 + lcs(X, Y, m - 1, n - 1);
-    }
-    else
-    {
-        return max(lcs(X, Y, m, n -1), lcs(X, Y, m - 1, n));
-    }
-}*/
-
-int lcs(char *X, char *Y, int m, int n)
-{
-    int l[m + 1][n + 1];
-    int i, j;
-
-    for (int i = 0; i <= m; i++)
-    {
-        for (int j = 0; j <= n; j++)
-        {
-            if (i == 0 || j == 0)
-            {
-                l[i][j] = 0;
-            }
-            else if (X[i - 1] == Y[j - 1])
-            {
-                l[i][j] = l[i - 1][j - 1] + 1;
-            }
-            else
-            {
-                l[i][j] = max(l[i - 1][j], l[i][j - 1]);
-            }
-        }
-    }
-    return l[m][n];
+    return (x>y)?x:y;
 }
 
-int max(int a, int b)
+/*
+int LongestPalidromicString(char *arr, int i, int j)
 {
-    return (a > b) ? a : b;
+    if(i==j){
+        return 1;
+    }
+    if(arr[i]==arr[j]&&i+1==j){
+        return 2;
+    }
+    if(arr[i]==arr[j]){
+        return LongestPalidromicString(arr,i+1,j-1)+2;
+    }
+    return max(LongestPalidromicString(arr,i,j-1),LongestPalidromicString(arr,i+1,j));
 }
 
 int main()
 {
-    char X[] = "AGGTAB";
-    char Y[] = "GXTXAYB";
+    char arr[]="GEEKFORKEEKS";
+    int n=strlen(arr);
+    cout<<"Longest palidromic substring is:"<<LongestPalidromicString(arr,0,n-1);
+    return 0;
+}
+*/
 
-    int m = strlen(X);
-    int n = strlen(Y);
+int LongestPalidromicSubstring(char *arr)
+{
+    int n=strlen(arr);
+    int dp[n][n];
 
-    cout << "length of longest common sequence is:" << lcs(X, Y, m, n);
+    for(int i=0;i<n;i++){
+        dp[i][i]=1;
+    }
+
+    for(int l=2;l<=n;l++){
+        for(int i=0;i<n-l+1;i++){
+            int j=i-l-1;
+            if(arr[i]==arr[j]&&l==2){
+                dp[i][j]=2;
+            }
+            else if(dp[i]==dp[j]){
+                dp[i][j]=dp[i+1][j-1]+2;
+            }
+            else{
+                dp[i][j]=max(dp[i][j-1],dp[i+1][j]);
+            }
+        }
+    }
+    return dp[0][n-1];
+}
+
+int main()
+{
+    char arr[]="GEEKFORGEEKS";
+    cout<<LongestPalidromicSubstring(arr);
     return 0;
 }

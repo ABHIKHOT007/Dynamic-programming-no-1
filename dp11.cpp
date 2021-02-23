@@ -1,72 +1,79 @@
 #include <bits/stdc++.h>
 using namespace std;
+//Egg dropping problem.
+//Recursive apporach.
 
-//coint change problem
-//it has both optimal substructur and overlapping subproblem property.
-/*
-int count(int arr[], int m, int n)
+int max(int a, int b)
 {
-    if (n == 0)
+    return (a > b) ? a : b;
+}
+/*
+int EggDrop(int n, int k)
+{
+    if (k == 1 || k == 0)
     {
-        return 1;
+        return k;
     }
-    if (n < 0)
+    if (n == 1)
     {
-        return 0;
-    }
-    if (m == 0 && n >= 1)
-    {
-        return 0;
+        return k;
     }
 
-    return count(arr, m - 1, n) + count(arr, m, n - arr[m - 1]);
+    int min = INT_MAX;
+    int x, res;
+
+    for (x = 1; x <= k; x++)
+    {
+        res = max(EggDrop(n - 1, x - 1), EggDrop(n, k - x));
+        if (res < min)
+        {
+            min = res;
+        }
+    }
+    return min + 1;
 }
 */
-/*
-int count(int arr[], int m, int n)
+//tabulation method.
+//o(n*k^2)
+
+int EggDrop(int n, int k)
 {
-    int i, j, x, y;
-
-    int table[n + 1][m];
-
-    for (int i = 0; i < m; i++)
+    int dp[n + 1][k + 1];
+    int res;
+    int i, j, x;
+    for (int i = 1; i <= n; i++)
     {
-        table[0][i] = 1;
+        dp[i][1] = 1;
+        dp[i][0] = 0;
     }
 
-    for (int i = 1; i < n; i++)
+    for (int j = 1; j <= k; j++)
     {
-        for (int j = 0; j < m; j++)
+        dp[1][j] = j;
+    }
+
+    for (int i = 2; i <= n; i++)
+    {
+        for (int j = 2; j <= k; j++)
         {
-            x = (i - arr[j] >= 0) ? table[i - arr[j]][i] : 0;
-            y = (j >= 1) ? table[i][j - 1] : 0;
-            table[i][j] = x + y;
+            dp[i][j] = INT_MAX;
+            for (int x = 1; x <= j; x++)
+            {
+                res = 1 + max(dp[i - 1][x - 1], dp[i][j - x]);
+                if (res < dp[i][j])
+                {
+                    dp[i][j] = res;
+                }
+            }
         }
     }
-    return table[n][m - 1];
-}*/
-
-int count(int arr[], int m, int n)
-{
-    int table[n + 1];
-    memset(table, 0, sizeof(table));
-    table[0] = 1;
-
-    for (int i = 0; i < m; i++)
-    {
-        for (int j = arr[i]; j <= n; j++)
-        {
-            table[j] += table[j - arr[i]];
-        }
-    }
-    return table[n];
+    return dp[n][k];
 }
 
 int main()
 {
-    int i, j;
-    int arr[] = {1, 2, 3};
-    int m = sizeof(arr) / sizeof(arr[0]);
-    cout << "no of ways are:" << count(arr, m, 4);
+    int n = 2;
+    int k = 10;
+    cout << "Minimum number of trials in worst case with" << n << "eggs and" << k << "florr are:" << EggDrop(n, k);
     return 0;
 }

@@ -1,62 +1,71 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
+//printing partition subsets.
+//o(n^2)
 
-//Moser-de Bruijn sequence.
-/*
-int gen(int n)
+void printsets(vector<int> set1, vector<int> set2)
 {
-    if (n == 0)
-    {
-        return 0;
+    
+    for(int i=0;i<set1.size();i++){
+        cout<<set1[i]<<" ";
     }
-    else if (n == 1)
-    {
-        return 1;
-    }
-
-    else if (n % 2 == 0)
-    {
-        return 4 * gen(n / 2);
-    }
-    else if (n % 2 == 1)
-    {
-        return 4 * gen(n / 2) + 1;
-    }
-   
-}
-*/
-
-int gen(int n)
-{
-    int dp[n + 1];
-    dp[0] = 1;
-    dp[1] = 1;
-
-    for (int i = 2; i <= n; i++)
-    {
-        if (i % 2 == 0)
-        {
-            dp[i] = 4 * dp[i / 2];
-        }
-        else
-        {
-            dp[i] = 4 * dp[i / 2] + 1;
-        }
+    cout<<"\n";
+    for(int i=0;i<set2.size();i++){
+        cout<<set2[i]<<" ";
     }
 }
 
-int moserde(int n)
+bool findpartition(int arr[],int n, vector<int> &set1, vector<int> &set2, int sum1, int sum2, int pos)
 {
-    for (int i = 0; i < n; i++)
-    {
-        cout << gen(i) << " ";
+    if(pos==n){
+        if(sum1==sum2){
+            printsets(set1,set2);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-    cout << "\n";
+    set1.push_back(arr[pos]);
+    bool res=findpartition(arr,n,set1,set2,sum1+arr[pos],sum2,pos+1);
+
+    if(res){
+        return res;
+    }
+
+    set1.pop_back();
+    set2.push_back(arr[pos]);
+    res=findpartition(arr,n,set1,set2,sum1,sum2+arr[pos],pos+1);
+    if(res==false){
+        if(!set2.empty()){
+            set2.pop_back();
+        }
+    }
+    return res;
+}
+
+bool isPartiton(int arr[], int n)
+{
+    int sum=0;
+    for(int i=0;i<n;i++){
+        sum+=arr[i];
+    }
+
+    if(sum%2!=0){
+        return false;
+    }
+
+    vector<int> set1,set2;
+
+    return findpartition(arr,n,set1,set2,0,0,0);
 }
 
 int main()
 {
-    int n = 15;
-    moserde(n);
+    int arr[]={5,5,1,11};
+    int n=sizeof(arr)/sizeof(arr[0]);
+    if(isPartiton(arr,n)){
+        cout<<"-1";
+    }
     return 0;
 }

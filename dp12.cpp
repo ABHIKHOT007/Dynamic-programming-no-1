@@ -1,50 +1,32 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//no of ways of paring the friends
-//o(n)
-/*
-int CountnoOfWays(int n)
+//Dice thrown problems.
+//o(n*x)
+
+int findWays(int f, int n, int s)
 {
-    int dp[n + 1];
-    for (int i = 0; i <= n; i++)
+    long dp[n + 1][s + 1];
+    memset(dp, 0, sizeof(dp));
+
+    dp[0][0] = 1;
+
+    for (int i = 1; i <= n; i++)
     {
-        if (i <= 2)
+        for (int j = i; j <= s; j++)
         {
-            dp[i] = i;
+            dp[i][j] = dp[i][j - 1] + dp[i - 1][j - 1];
+            if (j - f - 1 >= 0)
+            {
+                dp[i][j] -= dp[i - 1][j -f - 1];
+            }
         }
-        else
-        {
-            dp[i] = dp[i - 1] + (i - 1) * dp[i - 2];
-        }
     }
-    return dp[n];
-}*/
-
-//using recursion formula
-
-int dp[1000];
-
-int CountnoOfWays(int n)
-{
-    if (dp[n] != -1)
-    {
-        return dp[n];
-    }
-    if (n > 2)
-    {
-        return dp[n] = CountnoOfWays(n - 1) + (n - 1) * CountnoOfWays(n - 2);
-    }
-    else
-    {
-        return dp[n] = n;
-    }
+    return dp[n][s];
 }
+
 int main()
 {
-    int n = 4;
-    memset(dp, -1, sizeof(dp));
-
-    cout << "no of ways of paring the friends are:" << CountnoOfWays(n) << "\n";
+    cout << findWays(4, 2, 1);
     return 0;
 }

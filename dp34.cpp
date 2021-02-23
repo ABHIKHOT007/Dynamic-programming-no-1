@@ -1,52 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//maximum sum of bitonic subsequence
+//Coin change permuatation.
+//o(n^2) time complexity
+//o(n) space complexity
 
-int maxsum(int arr[], int n)
+int CoinChangePermuation(int arr[], int n, int tar)
 {
-    int max_sum = INT_MIN;
-
-    int MSIBS[n];
-    int MSDBS[n];
-
-    for (int i = 0; i < n; i++)
+    int dp[tar + 1];
+    memset(dp, 0, sizeof(dp));
+    dp[0] = 1;
+    for (int i = 1; i <= tar; i++)
     {
-        MSDBS[i] = arr[i];
-        MSIBS[i] = arr[i];
-    }
-    for (int i = 1; i < n; i++)
-    {
-        for (int j = 0; j < i; j++)
+        for (int j = 0; j < n; j++)
         {
-            if (arr[i] > arr[j] && MSIBS[i] < MSIBS[j] + arr[i])
+            if (j <= i)
             {
-                MSIBS[i] = MSIBS[j] + arr[i];
+                dp[i] += dp[i - j];
             }
         }
     }
-    for (int i = n - 2; i >= 0; i--)
-    {
-        for (int j = n - 1; j > i; j--)
-        {
-            if (arr[i] > arr[j] && MSDBS[i] < MSDBS[j] + arr[i])
-            {
-                MSDBS[i] = MSDBS[j] + arr[i];
-            }
-        }
-    }
-
-    for (int i = 0; i < n; i++)
-    {
-        max_sum = max(max_sum, (MSDBS[i] + MSIBS[i] - arr[i]));
-    }
-    return max_sum;
+    return dp[tar];
 }
 
 int main()
 {
-    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int arr[] = {1, 2, 3};
     int n = sizeof(arr) / sizeof(arr[0]);
-    cout << "Maximum sum is:" << maxsum(arr, n);
+    int tar = 4;
+    cout << CoinChangePermuation(arr, n, tar);
     return 0;
 }

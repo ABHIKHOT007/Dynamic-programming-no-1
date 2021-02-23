@@ -1,32 +1,130 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int assembley(int a[][4], int t[][4], int *e, int *x)
+//Larget independent set problem.
+//Expoential time complexity.
+/*
+int max(int x, int y)
 {
-    int first, second, i;
+    return (x>y)?x:y;
+}
 
-    first = e[0] + a[0][0];
-    second = e[1] + a[1][0];
+class node
+{
+    public:
+    int data;
+    node *left;
+    node *right;
+};
 
-    for (int i = 1; i < 4; i++)
-    {
-        int up = min(first + a[0][i], second + t[1][i] + a[0][i]);
-        int down = min(second + a[0][i], first + t[0][i] + a[1][i]);
-        first = up;
-        second = down;
+int LISS(node *root)
+{
+    if(root==NULL){
+        return 0;
     }
-    return min(first + x[0], second + x[i]);
+
+    int size_excl=LISS(root->left)+LISS(root->right);
+    int size_incl=1;
+    if(root->left!=0){
+        size_incl+=LISS(root->left->left)+LISS(root->right->right);
+    }
+    if(root->right!=0){
+        size_incl+=LISS(root->right->left)+LISS(root->right->right);
+    }
+    return max(size_incl,size_excl);
+}
+
+node *newNode(int data)
+{
+    node *temp=new node();
+    temp->data = data;
+    temp->right = temp->right = NULL;
+    return temp;
 }
 
 int main()
 {
-    int a[][4] = {{4, 5, 3, 2},
-                  {2, 10, 1, 4}};
-    int t[][4] = {{0, 7, 4, 5},
-                  {0, 9, 2, 8}};
-    int e[] = {10, 12};
-    int x[] = {18, 7};
+    node *root = newNode(20);
+    root->left=newNode(8);
+    root->left->left=newNode(4);
+    root->right->right=newNode(12);
+    root->right->left=newNode(12);
+    root->left->right->left=newNode(10);
+    root->left->right->right=newNode(14);
+    root->right=newNode(22);
+    root->right->right=newNode(25);
 
-    cout << assembley(a, t, e, x);
+    cout<<LISS(root);
+    return 0;
+}
+*/
+//Memoization method.
+//o(n)
+
+#include <bits/stdc++.h>
+using namespace std;
+
+int max(int x, int y)
+{
+    return (x > y) ? x : y;
+}
+
+class node
+{
+public:
+    int data;
+    int liss;
+    node *left;
+    node *right;
+};
+
+int LISS(node *root)
+{
+    if (root == NULL)
+    {
+        return 0;
+    }
+    if (root->liss)
+    {
+        return root->liss;
+    }
+    if (root->left == NULL && root->right == NULL)
+    {
+        return (root->liss = 1);
+    }
+    int liss_excl = LISS(root->left) + LISS(root->right);
+
+    int liss_incl = 1;
+    if (root->left)
+    {
+        liss_incl += LISS(root->left->left) + LISS(root->left->right);
+    }
+    if (root->right)
+    {
+        liss_incl += LISS(root->right->left) + LISS(root->right->left);
+    }
+    root->liss = max(liss_incl, liss_excl);
+    return root->liss;
+}
+
+node *newNode(int data)
+{
+    node *temp = new node;
+    temp->data = data;
+    temp->left = temp->right = NULL;
+    return temp;
+}
+
+int main()
+{
+    node *root = newNode(22);
+    root->left = newNode(8);
+    root->left->left = newNode(4);
+    root->left->right = newNode(12);
+    root->left->right->left = newNode(10);
+    root->left->right->left = newNode(14);
+    root->right = newNode(22);
+    root->right->right = newNode(25);
+    cout << LISS(root);
     return 0;
 }

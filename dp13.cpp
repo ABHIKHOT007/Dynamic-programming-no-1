@@ -1,64 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-//subset sum problem
-/*
-bool issubsetsum(int arr[], int n, int sum)
+//Word break problem.
+//standard recursive apporach.
+//Exponential time complexity.
+
+int dictionaryContains(string word)
 {
-    if (sum == 0)
+    string dictonary[] = {"mobile", "samsung", "sam", "sung", "man", "mango", "iceream", "and", "go", "i", "like", "ice", "cream"};
+
+    int size = sizeof(dictonary) / sizeof(dictonary[0]);
+
+    for (int i = 0; i < size; i++)
     {
-        return true;
+        if (dictonary[i].compare(word) == 0)
+        {
+            return true;
+        }
     }
+    return false;
+}
+
+bool isContain(string str)
+{
+    int n = str.size();
+
     if (n == 0)
     {
-        return false;
-    }
-
-    if (arr[n - 1] > sum)
-    {
-        return issubsetsum(arr, n - 1, sum);
-    }
-    return issubsetsum(arr, n - 1, sum) || issubsetsum(arr, n - 1, sum - arr[n - 1]);
-}*/
-
-bool issubsetsum(int arr[], int n, int sum)
-{
-    bool subset[n + 1][sum + 1];
-
-    for (int i = 0; i < n; i++)
-    {
-        subset[i][0] = true;
-    }
-    for (int i = 1; i <= sum; i++)
-    {
-        subset[0][i] = false;
+        return true;
     }
 
     for (int i = 1; i <= n; i++)
     {
-        for (int j = 1; j <= sum; j++)
+        if (dictionaryContains(str.substr(0, i)) && isContain(str.substr(i, n - i)))
         {
-            if (j < arr[i - 1])
-            {
-                subset[i][j] = subset[i - 1][j];
-            }
-            if (j >= arr[i - 1])
-            {
-                subset[i][j] = subset[i - 1][j] || subset[i - 1][j - arr[i - 1]];
-            }
+            return true;
         }
     }
-    return subset[n][sum];
+    return false;
 }
 
 int main()
 {
-    int arr[] = {3, 34, 4, 12, 5, 2};
-    int sum = 9;
-    int n = sizeof(arr) / sizeof(int);
-    issubsetsum(arr, n, sum) ? cout << "YES"
-                                    << "\n"
-                             : cout << "NO"
-                                    << "\n";
+    isContain("ilikesamsung") ? cout << "YES" : cout << "NO";
     return 0;
 }

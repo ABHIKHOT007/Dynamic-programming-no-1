@@ -1,37 +1,48 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-#define num_line 2
-#define num_station 4
 
-int min(int a, int b)
+//maximum revenue from the billboards placed on the road of length m miles.
+
+int maxRevenue(int m, int arr[], int revenue[], int n, int t)
 {
-    return (a < b) ? a : b;
-}
+    int dp[m+1];
+    memset(dp,0,sizeof(dp));
+    int nextbb=0;
 
-int assembly(int a[][num_station], int t[][num_station], int *e, int *x)
-{
-    int t1[num_station];
-    int t2[num_station];
-    int i;
+    for(int i=1;i<=m;i++){
+        //if all billboards are already placed in maximum profit order.
+        //otherwise.
+        if(nextbb<n){
 
-    t1[0] = e[0] + a[0][0];
-    t2[0] = e[0] + a[1][0];
+            if(arr[nextbb]!=i){
+                dp[i]=dp[i-1];
+            }
+            else{
+                //if it the last billboard remained.
 
-    for (int i = 1; i < num_station; i++)
-    {
-        t1[i] = min(t1[i - 1] + a[0][i], t2[i - 1] + t[1][i] + a[0][i]);
-        t2[i] = min(t1[i - 1] + a[1][i], t1[i - 1] + t[0][i] + a[1][i]);
+                if(i<=t){
+                    dp[i]=max(dp[i-1],revenue[nextbb]);
+                }
+                else{
+                    dp[i]=max(dp[i-t-1]+revenue[nextbb],dp[i-1]);
+                }
+                nextbb++;
+            }
+        }
+        else{
+            dp[i]=dp[i-1];
+        }
     }
-    return min(t1[num_station - 1] + x[0], t2[num_station - 1] + x[1]);
+    return dp[m];
 }
 
 int main()
 {
-    int a[][num_station] = {{4, 5, 3, 2}, {2, 10, 1, 4}};
-    int t[][num_station] = {{0, 7, 4, 5}, {0, 9, 2, 8}};
-
-    int e[] = {10, 12};
-    int x[] = {18, 7};
-    cout << assembly(a, t, e, x);
+    int m=20;
+    int arr[]={6,7,12,14};
+    int n=sizeof(arr)/sizeof(arr[0]);
+    int t=5;
+    int revenue[]={5,6,5,3,1};
+    cout<<maxRevenue(m,arr,revenue,n,t);
     return 0;
 }
