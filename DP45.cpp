@@ -1,0 +1,56 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int findsequence(string s, string t)
+{
+    int m = t.length();
+    int n = s.length();
+
+    if (m > n)
+    {
+        return 0;
+    }
+
+    int dp[m + 1][n + 1];
+
+    for (int i = 0; i <= m; i++)
+    {
+        dp[i][0] = 0;
+    }
+    for (int j = 0; j <= n; j++)
+    {
+        dp[0][j] = 1;
+    }
+
+    for (int i = 1; i <= m; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            if (t[i - 1] != s[j - 1])
+            {
+                dp[i][j] = dp[i][j - 1];
+            }
+            else
+            {
+                dp[i][j] = dp[i][j - 1] + dp[i - 1][j - 1];
+            }
+        }
+    }
+    for (int i = 1; i <= m; i++)
+    {
+        for (int j = 1; j <= n; j++)
+        {
+            cout << dp[i][j] << " ";
+        }
+    }
+
+    return dp[m][n];
+}
+
+int main()
+{
+    string t = "GG";
+    string s = "GEEKFORGEEKS";
+    cout << findsequence(s, t) << "\n";
+    return 0;
+}
