@@ -21,7 +21,7 @@ int cutRod(int arr[], int n)
         max_val=max(max_val,arr[i]+cutRod(arr,n-i-1));
     }
     return max_val;
-}
+} 
 */
 
 //O(n^2)

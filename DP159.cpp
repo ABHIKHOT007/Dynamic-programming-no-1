@@ -15,6 +15,7 @@ int minJumps(int arr[], int n)
         return INT_MAX;
     }
 
+
     jumps[0] = 0;
     for (int i = 1; i < n; i++)
     {
